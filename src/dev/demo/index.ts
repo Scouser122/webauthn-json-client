@@ -25,37 +25,70 @@ function registeredCredentials(): PublicKeyCredentialDescriptorJSON[] {
 }
 
 async function register(): Promise<void> {
-  const cco = parseCreationOptionsFromJSON({
-    publicKey: {
-      challenge: "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
-      rp: { name: "Localhost, Inc." },
-      user: {
-        id: "IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII",
-        name: "test_user",
-        displayName: "Test User",
-      },
-      pubKeyCredParams: [],
-      excludeCredentials: registeredCredentials(),
-      authenticatorSelection: { userVerification: "discouraged" },
-      extensions: {
-        credProps: true,
-      },
+  const apiUrl = "http://localhost:10101/api/webauth"
+  const login = "testLogin"
+  const regStartResponse = await fetch(`${apiUrl}/registration/start?login=${login}`)
+  const regStartResponseText = await regStartResponse.text()
+
+  console.log(`/registration/start response: ${regStartResponseText}`)
+
+  const regPublicKey = JSON.parse(regStartResponseText)
+
+  const cco = parseCreationOptionsFromJSON(regPublicKey)
+
+  const registration = await create(cco)
+
+  console.log(`registration: ${JSON.stringify(registration)}`)
+
+  const regFinishResponse = await fetch(`${apiUrl}/registration/finish`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
     },
-  });
-  saveRegistration(await create(cco));
+    body: JSON.stringify({
+      "userName": login,
+      "publicKeyCredential": JSON.stringify(registration)
+    })
+  })
+  const regFinishResponseText = await regFinishResponse.text()
+  console.log(`/registration/finish response: ${regFinishResponseText}`)
+
+  saveRegistration(registration)
 }
 
 async function authenticate(options?: {
   conditionalMediation?: boolean;
 }): Promise<AuthenticationPublicKeyCredential> {
-  const cro = parseRequestOptionsFromJSON({
-    publicKey: {
-      challenge: "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
-      allowCredentials: registeredCredentials(),
-      userVerification: "discouraged",
+  const apiUrl = "http://localhost:10101/api/webauth"
+  const login = "testLogin"
+
+  const authStartResponse = await fetch(`${apiUrl}/auth/start?login=${login}`)
+  const authStartResponseText = await authStartResponse.text()
+
+  console.log(`/auth/start response: ${authStartResponseText}`)
+
+  const cro = parseRequestOptionsFromJSON(JSON.parse(authStartResponseText))
+
+  const result = get(cro)
+  const authData = JSON.stringify((await result).toJSON())
+
+  console.log(`authData: ${authData}`)
+
+  const finishResponse = await fetch(`${apiUrl}/auth/finish`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
     },
-  });
-  return get(cro);
+    body: JSON.stringify({
+      "userName": login,
+      "authData": authData
+    })
+  })
+  const finishResponseText = await finishResponse.text()
+  
+  console.log(`/auth/finish response: ${finishResponseText}`)
+
+  return result
 }
 
 async function clear(): Promise<void> {
