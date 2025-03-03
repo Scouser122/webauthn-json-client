@@ -1,0 +1,81 @@
+{
+  "name": "@github/webauthn-json",
+  "version": "2.1.1",
+  "description": "A wrapper for the webauthn API that adapts input/output values to plain JSON with base64url.",
+  "author": "GitHub, Inc. <opensource+webauthn-json@github.com>",
+  "license": "MIT",
+  "type": "module",
+  "repository": "github:github/webauthn-json",
+  "main": "dist/esm/webauthn-json.js",
+  "types": "dist/types/index.d.ts",
+  "bin": "dist/bin/main.js",
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/webauthn-json.cjs",
+      "import": "./dist/esm/webauthn-json.js",
+      "types": "./dist/types/index.d.ts"
+    },
+    "./extended": {
+      "require": "./dist/cjs/webauthn-json.extended.cjs",
+      "import": "./dist/esm/webauthn-json.extended.js",
+      "types": "./dist/types/extended.d.ts"
+    },
+    "./browser-ponyfill": {
+      "import": "./dist/esm/webauthn-json.browser-ponyfill.js",
+      "types": "./dist/types/browser-ponyfill.d.ts"
+    },
+    "./browser-ponyfill/extended": {
+      "import": "./dist/esm/webauthn-json.browser-ponyfill.extended.js",
+      "types": "./dist/types/browser-ponyfill.extended.d.ts"
+    }
+  },
+  "devDependencies": {
+    "@open-wc/testing": "^3.1.7",
+    "@types/node": "^18.11.9",
+    "barely-a-dev-server": "^0.3.6",
+    "esbuild": "^0.15.13",
+    "rome": "^10.0.1",
+    "typescript": "^5.0.2"
+  },
+  "scripts": {
+    "build": "npm run build-js && npm run build-types",
+    "build-js": "node script/build-js.js",
+    "build-types": "npx tsc -p tsconfig-types.json",
+    "build-pages": "node script/build-pages.js",
+    "dev": "node script/dev.js",
+    "clean": "rm -rf ./.temp ./dist",
+    "test": "npx web-test-runner && npm run lint",
+    "lint": "npx rome check src",
+    "format": "npx rome format --write src",
+    "prepack": "npm run clean && npm run build"
+  },
+  "keywords": [
+    "webauthn",
+    "auth",
+    "u2f",
+    "security",
+    "credentials"
+  ],
+  "jest": {
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    }
+  },
+  "files": [
+    "/LICENSE.md",
+    "/README.md",
+    "/package.json",
+    "/package-lock.json",
+    "/dist/**/*",
+    "/browser-ponyfill/**/*",
+    "/extended/**/*",
+    "/src/webauthn-json/**/*"
+  ],
+  "dependencies": {
+    "@web/dev-server-esbuild": "^0.3.3",
+    "@web/test-runner": "^0.15.0"
+  }
+}

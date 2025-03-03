@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "alwaysStrict": true,
+    "esModuleInterop": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "moduleResolution": "node",
+    "target": "es2019",
+    "outDir": "dist/types"
+  },
+  "include": [
+    "src/**/*"
+  ]
+}
