@@ -25,7 +25,7 @@ function registeredCredentials(): PublicKeyCredentialDescriptorJSON[] {
 }
 
 async function register(): Promise<void> {
-  const apiUrl = "http://localhost:10101/api/webauth"
+  const apiUrl = "https://scouser122.online/api/webauth"
   const login = "testLogin"
   const regStartResponse = await fetch(`${apiUrl}/registration/start?login=${login}`)
   const regStartResponseText = await regStartResponse.text()
@@ -59,7 +59,7 @@ async function register(): Promise<void> {
 async function authenticate(options?: {
   conditionalMediation?: boolean;
 }): Promise<AuthenticationPublicKeyCredential> {
-  const apiUrl = "http://localhost:10101/api/webauth"
+  const apiUrl = "https://scouser122.online/api/webauth"
   const login = "testLogin"
 
   const authStartResponse = await fetch(`${apiUrl}/auth/start?login=${login}`)
